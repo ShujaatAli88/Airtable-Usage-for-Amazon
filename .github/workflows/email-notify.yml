@@ -1,4 +1,4 @@
-name: CI Email Notification
+name: CI Email and WhatsApp Notification
 
 on:
   push:
@@ -46,3 +46,44 @@ jobs:
 
             -------------------------------------------------------
             This is an automated message from your GitHub Actions.
+
+      - name: Send WhatsApp Notification
+        if: always()
+        env:
+          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+          TWILIO_WHATSAPP_FROM: ${{ secrets.TWILIO_WHATSAPP_FROM }}
+          WHATSAPP_TO: ${{ secrets.WHATSAPP_TO }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_SHA: ${{ github.sha }}
+          JOB_STATUS: ${{ job.status }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+        run: |
+          pip install twilio
+
+          echo 'import os' > send_whatsapp.py
+          echo 'from twilio.rest import Client' >> send_whatsapp.py
+          echo '' >> send_whatsapp.py
+          echo 'client = Client(os.environ["TWILIO_ACCOUNT_SID"], os.environ["TWILIO_AUTH_TOKEN"])' >> send_whatsapp.py
+          echo '' >> send_whatsapp.py
+          echo 'msg = f"""' >> send_whatsapp.py
+          echo '✅ GitHub Actions Notification' >> send_whatsapp.py
+          echo '' >> send_whatsapp.py
+          echo 'Repository: {os.environ["GITHUB_REPOSITORY"]}' >> send_whatsapp.py
+          echo 'Branch: {os.environ["GITHUB_REF_NAME"]}' >> send_whatsapp.py
+          echo 'Commit: {os.environ["GITHUB_SHA"][:7]}' >> send_whatsapp.py
+          echo 'Status: {os.environ["JOB_STATUS"]}' >> send_whatsapp.py
+          echo '' >> send_whatsapp.py
+          echo '🔗 Run: https://github.com/{os.environ["GITHUB_REPOSITORY"]}/actions/runs/{os.environ["GITHUB_RUN_ID"]}' >> send_whatsapp.py
+          echo '"""' >> send_whatsapp.py
+          echo '' >> send_whatsapp.py
+          echo 'message = client.messages.create(' >> send_whatsapp.py
+          echo '    body=msg,' >> send_whatsapp.py
+          echo '    from_=os.environ["TWILIO_WHATSAPP_FROM"],' >> send_whatsapp.py
+          echo '    to=os.environ["WHATSAPP_TO"]' >> send_whatsapp.py
+          echo ')' >> send_whatsapp.py
+          echo '' >> send_whatsapp.py
+          echo 'print("WhatsApp Message SID:", message.sid)' >> send_whatsapp.py
+
+          python send_whatsapp.py
