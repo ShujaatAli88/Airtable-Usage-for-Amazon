@@ -13,25 +13,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set start time
-        id: start
-        run: echo "start_time=$(date +%s)" >> $GITHUB_OUTPUT
-
-      - name: Simulate a build step
+      - name: Simulate build
         run: |
-          echo "Building the project..."
+          echo "Building project..."
           sleep 5
           echo "Build completed."
-
-      - name: Set end time and duration
-        id: end
-        run: |
-          end_time=$(date +%s)
-          start_time=${{ steps.start.outputs.start_time }}
-          duration=$((end_time - start_time))
-          minutes=$((duration / 60))
-          seconds=$((duration % 60))
-          echo "duration=${minutes}m ${seconds}s" >> $GITHUB_OUTPUT
 
       - name: Send Email Notification
         if: always()
@@ -42,57 +28,22 @@ jobs:
           secure: true
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: 🔔 CI Job - ${{ job.status }} [${{ github.repository }}]
+          subject: "✅ GitHub Actions Workflow - ${{ job.status | toUpperCase }}"
           to: ${{ secrets.EMAIL_TO }}
           from: GitHub Actions <${{ secrets.EMAIL_USERNAME }}>
-          content_type: text/html
           body: |
-            <html>
-              <body style="font-family: 'Segoe UI', sans-serif; color: #333; background: #f9f9f9; padding: 20px;">
-                <div style="max-width: 640px; background: #fff; padding: 24px; margin: auto; border-radius: 12px; box-shadow: 0 0 12px rgba(0,0,0,0.06);">
-                  <div style="display: flex; align-items: center;">
-                    <img src="https://github.com/${{ github.actor }}.png" alt="avatar" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 12px;">
-                    <div>
-                      <h2 style="margin: 0; color: #2c974b;">✅ CI Notification</h2>
-                      <p style="margin: 0; font-size: 14px; color: #666;">by ${{ github.actor }}</p>
-                    </div>
-                  </div>
+            -------------------------------------------------------
+            ✅ GitHub Actions Workflow Notification
+            -------------------------------------------------------
 
-                  <hr style="margin: 20px 0;" />
+            Repository:  ${{ github.repository }}
+            Branch:      ${{ github.ref_name }}
+            Commit SHA:  ${{ github.sha }}
+            Status:      ${{ job.status }}
+            Duration:    ${{ job.duration || 'N/A' }}
 
-                  <p>Hello <strong>${{ secrets.EMAIL_TO }}</strong>,</p>
-                  <p>The CI workflow for <strong>${{ github.repository }}</strong> has completed.</p>
+            Workflow Run URL:
+            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
-                  <table style="width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px;">
-                    <tr>
-                      <td style="padding: 8px; background: #f6f8fa;"><strong>📌 Branch</strong></td>
-                      <td style="padding: 8px;">${{ github.ref_name }}</td>
-                    </tr>
-                    <tr>
-                      <td style="padding: 8px; background: #f6f8fa;"><strong>🔁 Commit SHA</strong></td>
-                      <td style="padding: 8px;"><code>${{ github.sha }}</code></td>
-                    </tr>
-                    <tr>
-                      <td style="padding: 8px; background: #f6f8fa;"><strong>⏱ Duration</strong></td>
-                      <td style="padding: 8px;">${{ steps.end.outputs.duration }}</td>
-                    </tr>
-                    <tr>
-                      <td style="padding: 8px; background: #f6f8fa;"><strong>📊 Status</strong></td>
-                      <td style="padding: 8px; font-weight: bold; color: ${
-                        job.status == 'success' ? '#2c974b' : '#d73a49'
-                      };">${{ job.status }}</td>
-                    </tr>
-                  </table>
-
-                  <p style="margin-top: 20px;">
-                    👉 <a href="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" style="color: #0366d6; text-decoration: none;">View Workflow Run</a>
-                  </p>
-
-                  <hr style="margin-top: 30px;" />
-                  <p style="font-size: 12px; color: #888;">
-                    Sent automatically from GitHub Actions for repo <strong>${{ github.repository }}</strong>.<br />
-                    Triggered by <strong>${{ github.event_name }}</strong> on <strong>${{ github.ref_name }}</strong>.
-                  </p>
-                </div>
-              </body>
-            </html>
+            -------------------------------------------------------
+            This is an automated message from your GitHub Actions.
