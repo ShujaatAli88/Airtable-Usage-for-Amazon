@@ -93,5 +93,4 @@ jobs:
           echo '    to=os.environ["WHATSAPP_TO"]' >> notify.py
           echo ')' >> notify.py
           echo 'print("WhatsApp sent:", whatsapp.sid)' >> notify.py
-          
           python notify.py
