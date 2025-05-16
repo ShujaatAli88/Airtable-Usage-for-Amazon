@@ -28,17 +28,44 @@ jobs:
           secure: true
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: GitHub Actions Job - ${{ job.status }}
+          subject: 🚀 GitHub CI Status - ${{ job.status }} | ${{ github.repository }}
           to: ${{ secrets.EMAIL_TO }}
           from: GitHub Actions <${{ secrets.EMAIL_USERNAME }}>
+          content_type: text/html
           body: |
-            Hello,
+            <html>
+              <body style="font-family: 'Segoe UI', sans-serif; color: #333;">
+                <div style="border: 1px solid #e1e4e8; border-radius: 8px; padding: 20px; max-width: 600px; margin: auto; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+                  <h2 style="color: #2c974b;">✅ GitHub Actions Pipeline Notification</h2>
+                  <p>Hi <strong>${{ secrets.EMAIL_USERNAME }}</strong>,</p>
 
-            The CI job for repository ${{ github.repository }} has completed.
-            🔹 Branch: ${{ github.ref_name }}
-            🔹 Status: ${{ job.status }}
-            🔹 Commit: ${{ github.sha }}
+                  <p>The CI pipeline for your repository <strong>${{ github.repository }}</strong> has completed.</p>
 
-            View workflow: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+                  <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                    <tr>
+                      <td style="padding: 8px; background-color: #f6f8fa;"><strong>📌 Branch:</strong></td>
+                      <td style="padding: 8px;">${{ github.ref_name }}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 8px; background-color: #f6f8fa;"><strong>🔁 Commit SHA:</strong></td>
+                      <td style="padding: 8px;"><code>${{ github.sha }}</code></td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 8px; background-color: #f6f8fa;"><strong>📊 Status:</strong></td>
+                      <td style="padding: 8px; font-weight: bold; color: ${
+                        github.job.status == 'success' ? '#2c974b' : '#d73a49'
+                      };">${{ job.status }}</td>
+                    </tr>
+                  </table>
 
-            -- GitHub Actions Bot
+                  <p style="margin-top: 20px;">
+                    👉 <a href="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" style="color: #0366d6; text-decoration: none;">View Workflow Run</a>
+                  </p>
+
+                  <hr style="margin-top: 30px;" />
+                  <p style="font-size: 12px; color: #888;">
+                    This email was sent automatically by your GitHub Actions CI pipeline.
+                  </p>
+                </div>
+              </body>
+            </html>
