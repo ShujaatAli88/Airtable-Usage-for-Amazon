@@ -1,0 +1,6 @@
+requests
+loguru
+lxml
+pydantic
+pyairtable
+python-dotenv
