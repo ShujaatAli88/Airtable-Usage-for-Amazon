@@ -13,11 +13,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Simulate build
+      - name: Simulate a build step
         run: |
-          echo "Building project..."
+          echo "Building the project..."
           sleep 5
-          echo "Build completed."
+          echo "Done."
 
       - name: Send Email Notification
         if: always()
@@ -28,7 +28,7 @@ jobs:
           secure: true
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "✅ GitHub Actions Workflow - ${{ job.status | toUpperCase }}"
+          subject: "✅ GitHub Actions Workflow - ${{ job.status }}"
           to: ${{ secrets.EMAIL_TO }}
           from: GitHub Actions <${{ secrets.EMAIL_USERNAME }}>
           body: |
@@ -40,7 +40,6 @@ jobs:
             Branch:      ${{ github.ref_name }}
             Commit SHA:  ${{ github.sha }}
             Status:      ${{ job.status }}
-            Duration:    ${{ job.duration || 'N/A' }}
 
             Workflow Run URL:
             https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
