@@ -54,7 +54,7 @@ jobs:
           TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
           TWILIO_SMS_FROM: ${{ secrets.TWILIO_SMS_FROM }}
           SMS_TO: ${{ secrets.SMS_TO }}
-          WHATSAPP_FROM: ${{ secrets.WHATSAPP_FROM }}
+          WHATSAPP_FROM: ${{ secrets.TWILIO_WHATSAPP_FROM }}
           WHATSAPP_TO: ${{ secrets.WHATSAPP_TO }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REF_NAME: ${{ github.ref_name }}
