@@ -1,5 +1,7 @@
 # 🛒 Amazon Product Detail Extraction
 
+# Test Email Trigger
+
 This project is a Python-based web scraper designed to extract product details from Amazon product pages. It can be used for market research, price monitoring, product analysis, or e-commerce data aggregation.
 
 ## 🚀 Features
