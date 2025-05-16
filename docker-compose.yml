@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    image: amazon-data-extractor:latest  # ← Image name added here
+    container_name: amazon_extractor
+    env_file:
+      - .env
+    command: python main.py
