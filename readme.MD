@@ -1,0 +1,1 @@
+Readme File For Amazon Data Extraction and Data Storage into Airtable.
